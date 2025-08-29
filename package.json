@@ -1,0 +1,30 @@
+{
+  "name": "playground",
+  "version": "0.0.0",
+  "main": "src/main.ts",
+  "scripts": {
+    "build": "npm run clean && tsc --declaration",
+    "clean": "rm -rf ./dist",
+    "dev": "npx tsx src/main.ts",
+    "dev:watch": "npx tsx --watch src/main.ts",
+    "production": "node dist/main.js"
+  },
+  "dependencies": {
+    "@comunica/query-sparql": "^4.3.0",
+    "express": "^5.1.0",
+    "n3": "^1.26.0"
+  },
+  "description": "playground package for api development",
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/n3": "^1.26.0",
+    "@types/node": "^24.3.0",
+    "eslint": "^9.33.0",
+    "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "author": "bram comyn",
+  "license": "MIT",
+  "type": "module"
+}
