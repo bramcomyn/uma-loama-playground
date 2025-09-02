@@ -3,40 +3,28 @@ import Logger from "../logger/logger";
 import { checkContentTypeEquals } from "./middleware";
 import { RequestController } from "../controllers/requests";
 import { MemoryRequestStore } from "../stores/requests";
+import { defaultIdParamRouteHandler, defaultRouteHandler, Method } from "../util";
 
 const router = Router();
 const controller = new RequestController(
     new MemoryRequestStore()
 );
 
-router.get('/', (_, res) => {
-    Logger.info(`Received GET for /uma/requests`);
-    res.status(204);
-    res.send();
-});
+router.get('/', defaultRouteHandler(Method.GET));
 
 router.post('/', checkContentTypeEquals('text/turtle'));
-router.post('/', async (request, response, next) => {
-    Logger.info(`Received POST for /uma/requests`);
+router.post('/', async (request, response) => {
+    Logger.info(`Received POST for ${request.baseUrl}`);
 
     const clientID = request.headers['authorization'];
     if (request.body) await controller.addRequest(request.body, clientID);
     
-    response.status(201);
-    response.send();
+    response.status(201).send();
 });
 
 
-router.get('/:id', (req, res) => {
-    Logger.info(`Received GET for /uma/requests/${req.params.id}`);
-    res.status(204);
-    res.send();
-});
-
-router.patch('/:id', (req, res) => {
-    Logger.info(`Received PATCH for /uma/requests/${req.params.id}`);
-    res.status(204);
-    res.send();
-});
+router.get('/:id', defaultIdParamRouteHandler(Method.GET));
+router.patch('/:id', defaultIdParamRouteHandler(Method.PATCH));
+router.delete('/:id', defaultIdParamRouteHandler(Method.DELETE));
 
 export default router;

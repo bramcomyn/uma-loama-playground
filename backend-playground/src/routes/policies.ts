@@ -3,40 +3,27 @@ import Logger from "../logger/logger";
 import { checkContentTypeEquals } from "./middleware";
 import { PolicyController } from "../controllers";
 import { MemoryPolicyStore } from "../stores";
+import { defaultIdParamRouteHandler, defaultRouteHandler, Method } from "../util";
 
 const router = Router();
 const controller = new PolicyController(
     new MemoryPolicyStore()
 );
 
-router.get('/', (_, res) => {
-    Logger.info(`Received GET for /uma/policies`);
-    res.status(204);
-    res.send();
-});
+router.get('/', defaultRouteHandler(Method.GET));
 
 router.post('/', checkContentTypeEquals('text/turtle'));
 router.post('/', async (request, response) => {
-    Logger.info(`Received POST for /uma/policies`);
+    Logger.info(`Received POST for ${request.baseUrl}`);
 
     const clientID = request.headers['authorization'];
     if (request.body) await controller.addPolicy(request.body, clientID);
     
-    response.status(201);
-    response.send();
+    response.status(201).send();
 });
 
 
-router.get('/:id', (req, res) => {
-    Logger.info(`Received GET for /uma/policies/${req.params.id}`);
-    res.status(204);
-    res.send();
-});
-
-router.patch('/:id', (req, res) => {
-    Logger.info(`Received PATCH for /uma/policies/${req.params.id}`);
-    res.status(204);
-    res.send();
-});
+router.get('/:id', defaultIdParamRouteHandler(Method.GET));
+router.patch('/:id', defaultIdParamRouteHandler(Method.PATCH));
 
 export default router;
