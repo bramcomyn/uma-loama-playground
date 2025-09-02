@@ -1,26 +1,26 @@
 import { Router } from "express";
 import Logger from "../logger/logger";
 import { checkContentTypeEquals } from "./middleware";
-import { RequestController } from "../controllers/requests";
-import { MemoryRequestStore } from "../stores/requests";
+import { PolicyController } from "../controllers";
+import { MemoryPolicyStore } from "../stores";
 
 const router = Router();
-const controller = new RequestController(
-    new MemoryRequestStore()
+const controller = new PolicyController(
+    new MemoryPolicyStore()
 );
 
 router.get('/', (_, res) => {
-    Logger.info(`Received GET for /uma/requests`);
+    Logger.info(`Received GET for /uma/policies`);
     res.status(204);
     res.send();
 });
 
 router.post('/', checkContentTypeEquals('text/turtle'));
-router.post('/', async (request, response, next) => {
-    Logger.info(`Received POST for /uma/requests`);
+router.post('/', async (request, response) => {
+    Logger.info(`Received POST for /uma/policies`);
 
     const clientID = request.headers['authorization'];
-    if (request.body) await controller.addRequest(request.body, clientID);
+    if (request.body) await controller.addPolicy(request.body, clientID);
     
     response.status(201);
     response.send();
@@ -28,13 +28,13 @@ router.post('/', async (request, response, next) => {
 
 
 router.get('/:id', (req, res) => {
-    Logger.info(`Received GET for /uma/requests/${req.params.id}`);
+    Logger.info(`Received GET for /uma/policies/${req.params.id}`);
     res.status(204);
     res.send();
 });
 
 router.patch('/:id', (req, res) => {
-    Logger.info(`Received PATCH for /uma/requests/${req.params.id}`);
+    Logger.info(`Received PATCH for /uma/policies/${req.params.id}`);
     res.status(204);
     res.send();
 });

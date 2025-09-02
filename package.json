@@ -4,7 +4,7 @@
   "main": "src/main.ts",
   "scripts": {
     "build": "npm run clean && tsc --declaration",
-    "clean": "rm -rf ./dist",
+    "clean": "rm -rf ./dist ./logs",
     "dev": "npx tsx src/main.ts",
     "dev:watch": "npx tsx --watch src/main.ts",
     "production": "node dist/main.js"
@@ -12,7 +12,9 @@
   "dependencies": {
     "@comunica/query-sparql": "^4.3.0",
     "express": "^5.1.0",
-    "n3": "^1.26.0"
+    "koreografeye": "^0.5.0",
+    "n3": "^1.26.0",
+    "winston": "^3.17.0"
   },
   "description": "playground package for api development",
   "devDependencies": {
