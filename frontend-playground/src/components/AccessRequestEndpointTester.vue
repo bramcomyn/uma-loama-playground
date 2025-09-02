@@ -8,6 +8,7 @@ import { sendAccessRequest } from '@/lib/requests';
         title="Access Request Endpoint Tester"
         default-endpoint-url="http://localhost:5000"
         default-path="/uma/requests"
+        selected-resource-name="request"
         :send-request="sendAccessRequest"
     />
 </template>

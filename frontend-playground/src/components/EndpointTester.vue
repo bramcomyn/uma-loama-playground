@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, ref, computed } from 'vue';
+import { ref, computed } from 'vue';
 import { Method, Party } from '../lib/requests';
 
 // properties for reusability
@@ -7,6 +7,7 @@ const props = defineProps<{
     title: string,
     defaultEndpointUrl: string,
     defaultPath: string,
+    selectedResourceName: string,
     sendRequest: (method: Method, url: string, id: string, selected?: string) => 
         Promise<{ request: string, response: Response, created?: string }>
 }>();
@@ -39,15 +40,15 @@ const lastResponse = ref('');
 const lastStatus = ref(0);
 const lastStatusText = ref('');
 
-const selectedRequest = ref('');
-const requests = ref([
-  'request'
+const selected = ref('');
+const selectedResources = ref([
+  props.selectedResourceName
 ]);
 
 const send = async (method: Method, party: Party) => {
     const id = party === Party.RO ? resourceOwnerID.value : requestingPartyID.value;
     const { request, response, created } = await props.sendRequest(
-        method, url.value, id, selectedRequest.value
+        method, url.value, id, selected.value
     );
 
     lastRequest.value = request;
@@ -56,9 +57,9 @@ const send = async (method: Method, party: Party) => {
     
     lastResponse.value = await response.text();
 
-    if (created && !requests.value.includes(created)) {
-      requests.value.push(created);
-      selectedRequest.value = created;
+    if (created && !selectedResources.value.includes(created)) {
+      selectedResources.value.push(created);
+      selected.value = created;
     }
 }
 
@@ -89,12 +90,12 @@ const clear = () => {
                     <label for="resource-owner-id">Resource Owner</label>
                     <input id="resource-owner-id" type="text" placeholder="enter resource owner webid" v-model="resourceOwnerID" />
 
-                    <label for="request-uri">Resource URI</label>
-                    <select id="request-uri" v-model="selectedRequest">
+                    <label for="selected-uri">Resource URI</label>
+                    <select id="selected-uri" v-model="selected">
                     <option disabled value="">-- choose a resource --</option>
                     <option :value="null">-- create new --</option>
-                    <option v-for="request in requests" :key="request" :value="request">
-                        {{ request }}
+                    <option v-for="resource in selectedResources" :key="resource" :value="resource">
+                        {{ resource }}
                     </option>
                     </select>
                 </div>
