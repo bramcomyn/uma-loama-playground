@@ -2,7 +2,7 @@ import express from "express";
 
 import * as policies from "./routes/policies";
 import * as requests from "./routes/requests"
-import Logger from "./logger/logger";
+import Logger from "./logger";
 import { addCORSHeaders, checkAuthorizationHeader } from "./routes/middleware";
 
 const app = express();

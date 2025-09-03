@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Logger from "../logger/logger";
+import Logger from "../logger";
 
 export const checkAuthorizationHeader = (request: Request, response: Response, next: Function) => {
     if (typeof request.headers['authorization'] === 'string' || request.method === 'OPTIONS')
@@ -11,8 +11,6 @@ export const checkAuthorizationHeader = (request: Request, response: Response, n
 };
 
 export const addCORSHeaders = (request: Request, response: Response, next: Function) => {
-    Logger.debug(`adding CORS headers`);
-
     response.header('access-control-allow-origin', '*');
     response.header('access-control-allow-methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     response.header('access-control-allow-headers', 'content-type, authorization');

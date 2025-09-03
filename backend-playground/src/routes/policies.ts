@@ -1,29 +1,6 @@
-import { Router } from "express";
-import Logger from "../logger/logger";
-import { checkContentTypeEquals } from "./middleware";
-import { PolicyController } from "../controllers";
-import { MemoryPolicyStore } from "../stores";
-import { defaultIdParamRouteHandler, defaultRouteHandler, Method } from "../util";
+import { store } from "../stores";
+import { createRouter } from ".";
+import policyController from "../controllers/policy-controller";
 
-const router = Router();
-const controller = new PolicyController(
-    new MemoryPolicyStore()
-);
-
-router.get('/', defaultRouteHandler(Method.GET));
-
-router.post('/', checkContentTypeEquals('text/turtle'));
-router.post('/', async (request, response) => {
-    Logger.info(`Received POST for ${request.baseUrl}`);
-
-    const clientID = request.headers['authorization'];
-    if (request.body) await controller.addPolicy(request.body, clientID);
-    
-    response.status(201).send();
-});
-
-
-router.get('/:id', defaultIdParamRouteHandler(Method.GET));
-router.patch('/:id', defaultIdParamRouteHandler(Method.PATCH));
-
+export const router = createRouter(policyController(store), 'application/sparql-update');
 export default router;

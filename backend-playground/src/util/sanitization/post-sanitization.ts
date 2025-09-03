@@ -1,24 +1,18 @@
 import { Store } from "n3";
-import Logger from "../logger/logger";
-import { QueryEngine } from "@comunica/query-sparql";
+import Logger from "../../logger";
+import { queryEngine } from ".";
 
-const queryEngine = new QueryEngine();
-
-const sanitize = async (
+const sanitizePost = async (
     store: Store,
-    clientID: string,
     query: string,
     vars: string[]
 ): Promise<Store> => {
-    Logger.info(`Sanitizing new data for ${clientID}`);
     const result = new Store();
 
     const bindings = await queryEngine.queryBindings(query, { sources: [store] });
     const results: Store[] = [];
 
     for await (const binding of bindings) {
-        Logger.debug(`Binding found: ${binding.toString()}`);
-
         const subStore = new Store();
         let valid = true;
 
@@ -45,7 +39,7 @@ const sanitize = async (
     return result;
 };
 
-const policyQuery = (clientID: string) => `
+const postPolicyQuery = (clientID: string) => `
     PREFIX odrl: <http://www.w3.org/ns/odrl/2/>
     PREFIX dct: <http://purl.org/dc/terms/>
 
@@ -63,10 +57,10 @@ const policyQuery = (clientID: string) => `
     }
 `;
 
-export const sanitizePolicy = (store: Store, clientID: string) =>
-    sanitize(store, clientID, policyQuery(clientID), ["p", "r"]);
+export const sanitizePostPolicy = (store: Store, clientID: string) =>
+    sanitizePost(store, postPolicyQuery(clientID), ["p", "r"]);
 
-const requestQuery = (clientID: string) => `
+const postRequestQuery = (clientID: string) => `
     PREFIX ex: <http://example.org/>
     PREFIX sotw: <https://w3id.org/force/sotw#>
     PREFIX dcterms: <http://purl.org/dc/terms/>
@@ -82,12 +76,16 @@ const requestQuery = (clientID: string) => `
     }
 `;
 
-export const sanitizeRequest = (store: Store, clientID: string) =>
-    sanitize(store, clientID, requestQuery(clientID), ["r"]);
+export const sanitizePostRequest = (store: Store, clientID: string) =>
+    sanitizePost(store, postRequestQuery(clientID), ["r"]);
 
 export const noAlreadyDefinedSubjects = (store: Store, newStore: Store): boolean =>
     newStore.getSubjects(null, null, null)
         .every((subject) => store.countQuads(subject, null, null, null) === 0);
+
+export class ConflictError extends Error {
+    constructor() { super(`Resource already exists`); }
+}
 
 export class SanitizationError extends Error {
     constructor(reason: string) { super(`Sanitization failed: ${reason}`); }
