@@ -23,7 +23,7 @@ type BodyBuilder = (
     method: Method,
     id: string,
     uri: string
-) => string | undefined;
+) => string | object | undefined;
 
 interface RequestOptions {
     method: Method;
@@ -32,6 +32,7 @@ interface RequestOptions {
     selected?: string;
     bodyBuilder: BodyBuilder;
     requireSelectionFor?: Method[];
+    sendJSONinsteadofSPARQLUpdate: boolean,
 }
 
 const sendRequest = async ({
@@ -41,6 +42,7 @@ const sendRequest = async ({
     selected,
     bodyBuilder,
     requireSelectionFor = [],
+    sendJSONinsteadofSPARQLUpdate
 }: RequestOptions): Promise<{
     request: string;
     response: Response;
@@ -60,7 +62,7 @@ const sendRequest = async ({
     if (method === Method.POST) {
         headers["Content-Type"] = "text/turtle";
     } else if (method === Method.PATCH) {
-        headers["Content-Type"] = "application/sparql-update";
+        headers["Content-Type"] = sendJSONinsteadofSPARQLUpdate ? "application/json" : "application/sparql-update";
     }
 
     const requestBody = bodyBuilder(method, id, resourceURI);
@@ -75,7 +77,7 @@ const sendRequest = async ({
         url: fetchURL,
         headers,
         method,
-        body: requestBody,
+        body: typeof requestBody === 'object' ? JSON.stringify(requestBody) : requestBody?.toString(),
     };
 
     const response = await fetch(
@@ -138,13 +140,7 @@ const accessBodyBuilder: BodyBuilder = (method, id, uri) => {
                 sotw:requestingParty <${id}> ;
                 ex:requestStatus ex:requested .`;
         case Method.PATCH:
-            return `
-            PREFIX ex: <http://example.org/>
-            PREFIX sotw: <http://w3id.org/force/sotw#>
-
-            DELETE { ?request ex:requestStatus ex:requested . }
-            INSERT { ?request ex:requestStatus ex:accepted . }
-            WHERE  { ?request a sotw:EvaluationRequest . }`;
+            return { status: 'accepted' };
         default:
             return undefined;
     }
@@ -158,6 +154,7 @@ export const sendPolicyRequest = (method: Method, url: string, id: string, selec
         selected,
         bodyBuilder: policyBodyBuilder,
         requireSelectionFor: [Method.PATCH, Method.DELETE],
+        sendJSONinsteadofSPARQLUpdate: false
     });
 
 export const sendAccessRequest = (method: Method, url: string, id: string, selected?: string) =>
@@ -168,4 +165,5 @@ export const sendAccessRequest = (method: Method, url: string, id: string, selec
         selected,
         bodyBuilder: accessBodyBuilder,
         requireSelectionFor: [Method.PATCH],
+        sendJSONinsteadofSPARQLUpdate: true
     });
