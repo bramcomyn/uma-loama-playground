@@ -73,7 +73,6 @@ const clear = () => {
 
 <template>
     <div class="container">
-        <h2>{{ props.title }}</h2>
         <div class="content">
             <div class="left">
                 <div class="main configuration">
@@ -99,7 +98,9 @@ const clear = () => {
                     </option>
                     </select>
                 </div>
-                <div class="main buttons">
+            </div>
+            <div class="middle">
+              <div class="main buttons">
                     <button @click.prevent="send(Method.GET, party)" class="get">send GET</button>
                     <button @click.prevent="send(Method.POST, party)" class="post">send POST</button>
                     <button @click.prevent="send(Method.PATCH, party)" class="patch">send PATCH</button>
@@ -131,34 +132,52 @@ const clear = () => {
 <style scoped>
 .container {
   max-width: 1200px;
-  margin: 2rem auto;
+  margin: 0 2rem 2rem;
   padding: 2rem;
   font-family: system-ui, sans-serif;
 }
 
 .content {
   display: flex;
-  flex-wrap: wrap; /* allows right to fall below left */
+  flex-wrap: wrap; /* allows stacking on small screens */
   gap: 2rem;
 }
 
-.left, .right {
-  flex: 1 1 0;        /* flex-grow, flex-shrink, flex-basis */
-  min-width: 300px;   /* prevents being too tiny */
+/* Each column gets its own width */
+.left, .middle, .right {
+  flex: 1 1 0;
+  min-width: 250px; /* prevents columns from shrinking too much */
 }
 
 .left {
   max-width: 40%;
 }
 
+.middle {
+  padding: 2rem 0 2rem;
+  max-width: 5%;
+}
+
 .right {
-  max-width: 60%;
+  max-width: 50%;
 }
 
 /* Responsive adjustment */
-@media (max-width: 800px) {
-  .left, .right {
-    max-width: 100%;  /* full width when stacked */
+@media (max-width: 1200px) {
+  .left {
+    max-width: 35%;
+  }
+  .middle {
+    max-width: 25%;
+  }
+  .right {
+    max-width: 40%;
+  }
+}
+
+@media (max-width: 900px) {
+  .left, .middle, .right {
+    max-width: 100%; /* stack columns vertically on small screens */
   }
 }
 

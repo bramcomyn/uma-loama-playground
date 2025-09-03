@@ -3,22 +3,28 @@ import { RouterLink, RouterView } from 'vue-router';
 </script>
 
 <template>
-  <div class="content">
+  <div class="app-content">
     <h1>Policy & Access Request Endpoint Tester</h1>
-    <nav>
-      <RouterLink to="/policies">Policy Endpoint Tester</RouterLink>
-      <RouterLink to="/requests">Access Request Endpoint Tester</RouterLink>
-    </nav>
-    <main>
-      <RouterView />
-    </main>
+    <div class="app-container">
+      <nav>
+        <RouterLink to="/policies">Policy Endpoint Tester</RouterLink>
+        <RouterLink to="/requests">Access Request Endpoint Tester</RouterLink>
+      </nav>
+      <main>
+        <RouterView />
+      </main>
+    </div>
   </div>
 </template>
 
 <style>
-.content {
+.app-container {
+  display: flex;
+}
+
+.app-content {
   max-width: 100%;
-  margin: 2rem auto;
+  max-height: 100%;
   padding: 2rem;
   font-family: system-ui, sans-serif;
   color: #333;
@@ -32,8 +38,10 @@ h1 {
 }
 
 nav {
+  margin: 0 2rem 2rem;
+  padding: 2rem 0 0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   gap: 2rem;
 }
 

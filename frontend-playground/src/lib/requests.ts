@@ -131,6 +131,7 @@ const accessBodyBuilder: BodyBuilder = (method, id, uri) => {
             @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
             ex:${uri} a sotw:EvaluationRequest ;
+                odrl:uid ex:${uri} ;
                 dcterms:issued "2025-08-21T11:24:34.999Z"^^xsd:datetime ;
                 sotw:requestedTarget <http://localhost:3000/resources/resource.txt> ;
                 sotw:requestedAction odrl:read ;
