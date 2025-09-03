@@ -35,7 +35,6 @@ nav {
   display: flex;
   justify-content: center;
   gap: 2rem;
-  margin-bottom: 2rem;
 }
 
 nav a {
@@ -56,9 +55,5 @@ nav a:hover {
 nav a.router-link-active {
   background: #007bff;
   color: white;
-}
-
-main {
-  padding: 2rem;
 }
 </style>

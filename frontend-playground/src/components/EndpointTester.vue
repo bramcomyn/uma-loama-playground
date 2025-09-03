@@ -103,6 +103,7 @@ const clear = () => {
                     <button @click.prevent="send(Method.GET, party)" class="get">send GET</button>
                     <button @click.prevent="send(Method.POST, party)" class="post">send POST</button>
                     <button @click.prevent="send(Method.PATCH, party)" class="patch">send PATCH</button>
+                    <button @click.prevent="send(Method.DELETE, party)" class="delete">send DELETE</button>
                 </div>
                 <div class="main change-party-button">
                     <button :value="party" @click.prevent="changeParty()">Send request as: {{ party }} (click to change)</button>
