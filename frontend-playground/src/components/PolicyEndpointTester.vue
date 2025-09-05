@@ -6,7 +6,7 @@ import { sendPolicyRequest } from '@/lib/requests';
 <template>
     <EndpointTester
         title="Policy Endpoint Tester"
-        default-endpoint-url="http://localhost:5000"
+        default-endpoint-url="http://localhost:4000"
         default-path="/uma/policies"
         selected-resource-name="policy"
         :send-request="sendPolicyRequest"
